@@ -10735,8 +10735,8 @@ class PDFPageView {
       showCanvas = null;
     };
     const ctx = canvas.getContext("2d", {
-      alpha: false,
-      willReadFrequently: !this.#enableHWA
+      alpha: true,
+      willReadFrequently: false
     });
     const outputScale = this.outputScale = new OutputScale();
     if (this.maxCanvasPixels === 0) {

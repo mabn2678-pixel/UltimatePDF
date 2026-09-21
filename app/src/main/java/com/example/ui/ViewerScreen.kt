@@ -2162,13 +2162,39 @@ fun PdfWebView(
                                                     overscroll-behavior: none !important;
                                                     overscroll-behavior-y: none !important;
                                                 }
-                                                .page, .spread, .dummyPage {
+                                                * {
+                                                    -webkit-tap-highlight-color: transparent !important;
+                                                }
+                                                .page, .spread, .dummyPage, #outerContainer, #viewerContainer, #viewer, .pdfViewer {
                                                     scroll-snap-align: none !important;
                                                     scroll-snap-stop: normal !important;
+                                                    -webkit-user-select: none !important;
+                                                    -moz-user-select: none !important;
+                                                    user-select: none !important;
                                                 }
-                                                .textLayer, .textLayer * {
+                                                .canvasWrapper, canvas {
+                                                    -webkit-user-select: none !important;
+                                                    -moz-user-select: none !important;
+                                                    user-select: none !important;
+                                                    pointer-events: none !important;
+                                                    -webkit-tap-highlight-color: transparent !important;
+                                                }
+                                                canvas::selection, .canvasWrapper::selection, .page::selection, .spread::selection, .dummyPage::selection, #viewerContainer::selection, #outerContainer::selection, body::selection, html::selection {
+                                                    background: transparent !important;
+                                                    background-color: transparent !important;
+                                                    color: inherit !important;
+                                                }
+                                                .textLayer {
                                                     contain: none !important;
                                                     background-color: transparent !important;
+                                                    -webkit-user-select: text !important;
+                                                    -moz-user-select: text !important;
+                                                    user-select: text !important;
+                                                }
+                                                .textLayer span {
+                                                    -webkit-user-select: text !important;
+                                                    -moz-user-select: text !important;
+                                                    user-select: text !important;
                                                 }
                                                 .textLayer.selecting, .textLayer.selecting * {
                                                     background: transparent !important;
