@@ -1616,6 +1616,14 @@ fun PdfWebView(
                 ): Boolean {
                     return false
                 }
+
+                override fun startActionMode(callback: android.view.ActionMode.Callback?): android.view.ActionMode? {
+                    return null
+                }
+
+                override fun startActionMode(callback: android.view.ActionMode.Callback?, type: Int): android.view.ActionMode? {
+                    return null
+                }
             }.apply {
                 createdWebViewRef = this
                 layoutParams = ViewGroup.LayoutParams(
@@ -1627,7 +1635,7 @@ fun PdfWebView(
                     "dark" -> android.graphics.Color.parseColor("#121212")
                     "black" -> android.graphics.Color.BLACK
                     "sepia" -> android.graphics.Color.parseColor("#F4ECD8")
-                    else -> android.graphics.Color.parseColor("#F4F4F9")
+                    else -> android.graphics.Color.WHITE
                 }
                 setBackgroundColor(webBgColor)
                 isFocusable = true
