@@ -696,8 +696,8 @@
     margin:-1px;
     padding:1px;
     background-color:var(--highlight-bg-color);
-    -webkit-backdrop-filter:none !important;
-            backdrop-filter:none !important;
+    -webkit-backdrop-filter:var(--highlight-backdrop-filter);
+            backdrop-filter:var(--highlight-backdrop-filter);
     border-radius:4px;
   }
 
@@ -719,47 +719,41 @@
 
 .selected:is(.textLayer .highlight){
       background-color:var(--highlight-selected-bg-color);
-      -webkit-backdrop-filter:none !important;
-              backdrop-filter:none !important;
+      -webkit-backdrop-filter:var(--highlight-selected-backdrop-filter);
+              backdrop-filter:var(--highlight-selected-backdrop-filter);
     }
 
 .textLayer ::-moz-selection{
-    background:rgba(33, 150, 243, 0.35) !important;
-    color: transparent !important;
+    background:rgba(0 0 255 / 0.25);
+    background:color-mix(in srgb, AccentColor, transparent 75%);
   }
 
 .textLayer ::selection{
-    background:rgba(33, 150, 243, 0.35) !important;
-    color: transparent !important;
-  }
-
-.textLayer span::selection{
-    background:rgba(33, 150, 243, 0.35) !important;
-    color: transparent !important;
+    background:rgba(0 0 255 / 0.25);
+    background:color-mix(in srgb, AccentColor, transparent 75%);
   }
 
 .textLayer br::-moz-selection{
-    background:transparent !important;
-    color: transparent !important;
+    background:transparent;
   }
 
 .textLayer br::selection{
-    background:transparent !important;
-    color: transparent !important;
+    background:transparent;
   }
 
-.textLayer .endOfContent,
+.textLayer .endOfContent{
+    display:block;
+    position:absolute;
+    inset:100% 0 0;
+    z-index:0;
+    cursor:default;
+    -webkit-user-select:none;
+       -moz-user-select:none;
+            user-select:none;
+  }
+
 .textLayer.selecting .endOfContent{
-    display: none !important;
-    visibility: hidden !important;
-    position: absolute !important;
-    width: 0 !important;
-    height: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    -webkit-user-select: none !important;
-       -moz-user-select: none !important;
-            user-select: none !important;
+    top:0;
   }
 
 .annotationLayer{
@@ -3258,11 +3252,6 @@
     overflow:hidden;
     width:100%;
     height:100%;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    user-select: none !important;
-    pointer-events: none !important;
-    -webkit-tap-highlight-color: transparent !important;
   }
 
 :is(.pdfViewer .canvasWrapper) canvas{
@@ -3273,22 +3262,8 @@
       display:block;
       width:100%;
       height:100%;
-      contain:none !important;
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      user-select: none !important;
-      pointer-events: none !important;
-      -webkit-tap-highlight-color: transparent !important;
+      contain:content;
     }
-
-:is(.pdfViewer .canvasWrapper) canvas::selection,
-.pdfViewer .canvasWrapper::selection,
-.pdfViewer .page::selection,
-.pdfViewer::selection {
-    background: transparent !important;
-    background-color: transparent !important;
-    color: inherit !important;
-}
 
 :is(:is(.pdfViewer .canvasWrapper) canvas) .structTree{
         contain:strict;

@@ -77,20 +77,9 @@ class MainActivity : ComponentActivity() {
         dynamicColor = false,
         colorPresetIndex = state.bottomBarColorIndex
       ) {
-        val surfaceColor = if (state.currentScreen == Screen.Viewer) {
-            when (state.readingTheme) {
-                "dark" -> androidx.compose.ui.graphics.Color(0xFF121212)
-                "black" -> androidx.compose.ui.graphics.Color.Black
-                "sepia" -> androidx.compose.ui.graphics.Color(0xFFF4ECD8)
-                else -> androidx.compose.ui.graphics.Color(0xFFF4F4F9)
-            }
-        } else {
-            MaterialTheme.colorScheme.background
-        }
-
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = surfaceColor
+            color = MaterialTheme.colorScheme.background
         ) {
           when (state.currentScreen) {
             Screen.Welcome -> {

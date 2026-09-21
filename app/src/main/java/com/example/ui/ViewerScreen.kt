@@ -34,7 +34,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -608,10 +607,6 @@ fun ViewerScreen(
         webViewRef?.evaluateJavascript("if (window.setScrubberColor) window.setScrubberColor('$primaryHex');", null)
     }
 
-    LaunchedEffect(state.readingTheme, webViewRef) {
-        webViewRef?.evaluateJavascript("if (window.applyTheme) window.applyTheme('${state.readingTheme}');", null)
-    }
-
     val configuration = LocalConfiguration.current
     LaunchedEffect(configuration.orientation, webViewRef) {
         webViewRef?.evaluateJavascript(
@@ -647,22 +642,13 @@ fun ViewerScreen(
         }
     }
 
-    val viewerBgColor = when (state.readingTheme) {
-        "dark" -> androidx.compose.ui.graphics.Color(0xFF121212)
-        "black" -> androidx.compose.ui.graphics.Color.Black
-        "sepia" -> androidx.compose.ui.graphics.Color(0xFFF4ECD8)
-        else -> androidx.compose.ui.graphics.Color(0xFFF4F4F9)
-    }
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = viewerBgColor,
         contentWindowInsets = WindowInsets(0.dp)
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(viewerBgColor)
                 .padding(innerPadding)
         ) {
             // Main WebView rendering PDF.js
@@ -1616,37 +1602,14 @@ fun PdfWebView(
                 ): Boolean {
                     return false
                 }
-
-                override fun startActionMode(callback: android.view.ActionMode.Callback?): android.view.ActionMode? {
-                    return null
-                }
-
-                override fun startActionMode(callback: android.view.ActionMode.Callback?, type: Int): android.view.ActionMode? {
-                    return null
-                }
             }.apply {
                 createdWebViewRef = this
-                // منع الـ WebView من محاولة استرجاع حالة تالفة بعد إغلاق التطبيق
-                isSaveEnabled = false
-
-                // مسح الكاش الرسومي والملفات المؤقتة لضمان بداية نظيفة (مثل أول تشغيل للتطبيق)
-                clearCache(true)
-                clearHistory()
-
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 overScrollMode = android.view.View.OVER_SCROLL_NEVER
-                val webBgColor = when (state.readingTheme) {
-                    "dark" -> android.graphics.Color.parseColor("#121212")
-                    "black" -> android.graphics.Color.BLACK
-                    "sepia" -> android.graphics.Color.parseColor("#F4ECD8")
-                    else -> android.graphics.Color.WHITE
-                }
-                setBackgroundColor(webBgColor)
-                isFocusable = true
-                isFocusableInTouchMode = true
+                setBackgroundColor(android.graphics.Color.WHITE)
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     try {
@@ -2193,66 +2156,27 @@ fun PdfWebView(
                                                     overscroll-behavior: none !important;
                                                     overscroll-behavior-y: none !important;
                                                 }
-                                                * {
-                                                    -webkit-tap-highlight-color: transparent !important;
-                                                }
-                                                .page, .spread, .dummyPage, #outerContainer, #viewerContainer, #viewer, .pdfViewer {
+                                                .page, .spread, .dummyPage {
                                                     scroll-snap-align: none !important;
                                                     scroll-snap-stop: normal !important;
-                                                    -webkit-user-select: none !important;
-                                                    -moz-user-select: none !important;
-                                                    user-select: none !important;
                                                 }
-                                                * {
-                                                    -webkit-backdrop-filter: none !important;
-                                                    backdrop-filter: none !important;
-                                                }
-                                                .canvasWrapper, canvas {
-                                                    -webkit-user-select: none !important;
-                                                    -moz-user-select: none !important;
-                                                    user-select: none !important;
-                                                    pointer-events: none !important;
-                                                    contain: none !important;
-                                                    -webkit-tap-highlight-color: transparent !important;
-                                                }
-                                                canvas::selection, .canvasWrapper::selection, .page::selection, .spread::selection, .dummyPage::selection, #viewerContainer::selection, #outerContainer::selection, body::selection, html::selection {
-                                                    background: transparent !important;
-                                                    background-color: transparent !important;
-                                                    color: inherit !important;
-                                                }
-                                                .textLayer {
+                                                .textLayer, .textLayer * {
                                                     contain: none !important;
                                                     background-color: transparent !important;
-                                                    -webkit-user-select: text !important;
-                                                    -moz-user-select: text !important;
-                                                    user-select: text !important;
-                                                }
-                                                .textLayer span {
-                                                    -webkit-user-select: text !important;
-                                                    -moz-user-select: text !important;
-                                                    user-select: text !important;
                                                 }
                                                 .textLayer.selecting, .textLayer.selecting * {
                                                     background: transparent !important;
                                                     background-color: transparent !important;
                                                 }
-                                                .textLayer .endOfContent, .textLayer.selecting .endOfContent {
-                                                    display: none !important;
-                                                    visibility: hidden !important;
-                                                    width: 0 !important;
-                                                    height: 0 !important;
-                                                    opacity: 0 !important;
-                                                    pointer-events: none !important;
+                                                .textLayer .endOfContent {
                                                     background: transparent !important;
                                                     background-color: transparent !important;
                                                 }
-                                                .textLayer ::selection, .textLayer span::selection {
+                                                .textLayer ::selection {
                                                     background: rgba(33, 150, 243, 0.35) !important;
-                                                    color: transparent !important;
                                                 }
-                                                .textLayer .endOfContent::selection {
-                                                    background: transparent !important;
-                                                    color: transparent !important;
+                                                ::selection {
+                                                    background: rgba(33, 150, 243, 0.35) !important;
                                                 }
                                                 #outerContainer, #viewerContainer, #viewer, .page, .spread, .dummyPage, .canvasWrapper, .textLayer, .annotationLayer {
                                                     overflow-anchor: none !important;
@@ -2475,30 +2399,24 @@ fun PdfWebView(
                                             window.applyTheme = function(themeName) {
                                                 var container = document.getElementById('viewerContainer');
                                                 if (!container) return;
-                                                var outer = document.getElementById('outerContainer');
                                                 container.style.filter = '';
                                                 container.style.backgroundColor = '';
                                                 document.body.style.backgroundColor = '';
-                                                if (outer) outer.style.backgroundColor = '';
                                                 if (themeName === 'dark') {
                                                     container.style.filter = 'invert(0.9) hue-rotate(180deg)';
                                                     container.style.backgroundColor = '#121212';
                                                     document.body.style.backgroundColor = '#121212';
-                                                    if (outer) outer.style.backgroundColor = '#121212';
                                                 } else if (themeName === 'black') {
                                                     container.style.filter = 'invert(1) contrast(1.1)';
                                                     container.style.backgroundColor = '#000000';
                                                     document.body.style.backgroundColor = '#000000';
-                                                    if (outer) outer.style.backgroundColor = '#000000';
                                                 } else if (themeName === 'sepia') {
                                                     container.style.filter = 'sepia(0.55) contrast(0.95) brightness(0.95)';
                                                     container.style.backgroundColor = '#F4ECD8';
                                                     document.body.style.backgroundColor = '#F4ECD8';
-                                                    if (outer) outer.style.backgroundColor = '#F4ECD8';
                                                 } else {
                                                     container.style.backgroundColor = '#F4F4F9';
                                                     document.body.style.backgroundColor = '#F4F4F9';
-                                                    if (outer) outer.style.backgroundColor = '#F4F4F9';
                                                 }
                                             };
 
@@ -3215,7 +3133,7 @@ fun PdfWebView(
                 onWebViewCreated(this)
             }
         },
-        modifier = modifier.clipToBounds()
+        modifier = modifier
     )
 }
 

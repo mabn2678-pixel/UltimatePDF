@@ -10043,9 +10043,12 @@ class TextLayerBuilder {
         anchor = anchor.parentNode;
       }
       const parentTextLayer = anchor.parentElement?.closest(".textLayer");
-      // Disable moving endDiv into DOM during selection dragging on Android WebView:
-      // Moving endDiv (100% width/height) into the selection range causes Chromium on Android
-      // to paint a massive black selection rectangle covering the page.
+      const endDiv = this.#textLayers.get(parentTextLayer);
+      if (endDiv) {
+        endDiv.style.width = parentTextLayer.style.width;
+        endDiv.style.height = parentTextLayer.style.height;
+        anchor.parentElement.insertBefore(endDiv, modifyStart ? anchor : anchor.nextSibling);
+      }
       prevRange = range.cloneRange();
     }, {
       signal
@@ -10736,7 +10739,7 @@ class PDFPageView {
     };
     const ctx = canvas.getContext("2d", {
       alpha: false,
-      willReadFrequently: false
+      willReadFrequently: !this.#enableHWA
     });
     const outputScale = this.outputScale = new OutputScale();
     if (this.maxCanvasPixels === 0) {
