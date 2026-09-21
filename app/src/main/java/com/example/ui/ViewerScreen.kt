@@ -1626,6 +1626,13 @@ fun PdfWebView(
                 }
             }.apply {
                 createdWebViewRef = this
+                // منع الـ WebView من محاولة استرجاع حالة تالفة بعد إغلاق التطبيق
+                isSaveEnabled = false
+
+                // مسح الكاش الرسومي والملفات المؤقتة لضمان بداية نظيفة (مثل أول تشغيل للتطبيق)
+                clearCache(true)
+                clearHistory()
+
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
