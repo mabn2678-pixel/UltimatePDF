@@ -34,6 +34,13 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     PDFBoxResourceLoader.init(applicationContext)
 
+    // Enable remote debugging for WebView to allow inspection via chrome://inspect
+    try {
+      android.webkit.WebView.setWebContentsDebuggingEnabled(true)
+    } catch (e: Exception) {
+      e.printStackTrace()
+    }
+
     val database = PdfDatabase.getDatabase(applicationContext)
     val viewModel: PdfViewModel by viewModels {
       PdfViewModelFactory(database.recentPdfDao())

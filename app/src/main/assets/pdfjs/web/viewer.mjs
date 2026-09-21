@@ -782,7 +782,7 @@ const defaultOptions = {
     kind: OptionKind.API
   },
   enableHWA: {
-    value: true,
+    value: false,
     kind: OptionKind.API + OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   enableXfa: {
@@ -798,7 +798,7 @@ const defaultOptions = {
     kind: OptionKind.API
   },
   isOffscreenCanvasSupported: {
-    value: true,
+    value: false,
     kind: OptionKind.API
   },
   maxImageSize: {
@@ -1497,7 +1497,7 @@ class BasePreferences {
     disableFontFace: false,
     disableRange: false,
     disableStream: false,
-    enableHWA: true,
+    enableHWA: false,
     enableXfa: true,
     viewerCssTheme: 0
   });
@@ -8658,6 +8658,12 @@ class PDFThumbnailView {
   }
   #getPageDrawContext(upscaleFactor = 1, enableHWA = this.enableHWA) {
     const canvas = document.createElement("canvas");
+    try {
+      canvas.addEventListener("contextlost", (e) => {
+        e.preventDefault();
+        console.warn("Thumbnail canvas contextlost prevented");
+      });
+    } catch(e) {}
     const ctx = canvas.getContext("2d", {
       alpha: false,
       willReadFrequently: !enableHWA
@@ -10715,6 +10721,12 @@ class PDFPageView {
     } = viewport;
     const canvas = document.createElement("canvas");
     canvas.setAttribute("role", "presentation");
+    try {
+      canvas.addEventListener("contextlost", (e) => {
+        e.preventDefault();
+        console.warn("PDF Page canvas contextlost prevented on page " + this.id);
+      });
+    } catch(e) {}
     const hasHCM = !!(pageColors?.background && pageColors?.foreground);
     const prevCanvas = this.canvas;
     const updateOnFirstShow = !prevCanvas && !hasHCM;

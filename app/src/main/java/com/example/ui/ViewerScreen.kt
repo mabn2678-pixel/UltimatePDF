@@ -1610,6 +1610,16 @@ fun PdfWebView(
                 )
                 overScrollMode = android.view.View.OVER_SCROLL_NEVER
                 setBackgroundColor(android.graphics.Color.WHITE)
+                clearHistory()
+
+                // Use software layer on WebView to eliminate hardware compositing glitches / black screen when native text selection handles are dragged
+                setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null)
+
+                try {
+                    WebView.setWebContentsDebuggingEnabled(true)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     try {
@@ -1636,6 +1646,13 @@ fun PdfWebView(
                 }
 
                 webChromeClient = object : WebChromeClient() {
+                    override fun onConsoleMessage(consoleMessage: android.webkit.ConsoleMessage?): Boolean {
+                        consoleMessage?.let {
+                            android.util.Log.d("PdfWebViewConsole", "[${it.messageLevel()}] ${it.message()} -- line ${it.lineNumber()} of ${it.sourceId()}")
+                        }
+                        return super.onConsoleMessage(consoleMessage)
+                    }
+
                     override fun onShowFileChooser(
                         webView: WebView?,
                         filePathCallback: ValueCallback<Array<Uri>>?,
@@ -2723,6 +2740,7 @@ fun PdfWebView(
                                                 if (window.PDFViewerApplicationOptions) {
                                                     window.PDFViewerApplicationOptions.set('disableHistory', true);
                                                     window.PDFViewerApplicationOptions.set('historyUpdateUrl', false);
+                                                    window.PDFViewerApplicationOptions.set('enableHWA', false);
                                                 }
                                             } catch (e) {}
 
@@ -3128,7 +3146,7 @@ fun PdfWebView(
                 // Encode file URL properly
                 val encodedFileUrl = Uri.encode("file://$pdfPath")
                 val currentPage = state.currentPage
-                val viewerUrl = "file:///android_asset/pdfjs/web/viewer.html?file=$encodedFileUrl#toolbar=0&page=$currentPage&zoom=${state.defaultZoom}&scrollMode=${if (state.snapToPage) 3 else if (state.scrollMode == "horizontal") 1 else 0}"
+                val viewerUrl = "file:///android_asset/pdfjs/web/viewer.html?file=$encodedFileUrl#toolbar=0&page=$currentPage&zoom=${state.defaultZoom}&scrollMode=${if (state.snapToPage) 3 else if (state.scrollMode == "horizontal") 1 else 0}&enableHWA=false"
                 loadUrl(viewerUrl)
                 onWebViewCreated(this)
             }
