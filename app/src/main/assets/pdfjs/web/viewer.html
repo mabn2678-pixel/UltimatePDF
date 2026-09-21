@@ -20,11 +20,12 @@ Adobe CMap resources are covered by their own copyright but the same license:
 
 See https://github.com/adobe-type-tools/cmap-resources
 -->
-<html dir="ltr" mozdisallowselectionprint>
+<html dir="ltr" mozdisallowselectionprint class="is-light">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate">
+    <meta name="color-scheme" content="light">
     <title>PDF.js viewer</title>
 
 <!-- This snippet is used in production (included from viewer.html) -->
@@ -33,6 +34,14 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     <link rel="stylesheet" href="viewer.css">
     <style>
+      :root, html, body {
+          color-scheme: light !important;
+          background-color: #F4F4F9 !important;
+      }
+      * {
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
+      }
       #toolbarContainer, .toolbar, #sidebarContainer, .findbar, #secondaryToolbar, #loadingBar { 
           display: none !important; 
           visibility: hidden !important;
@@ -48,6 +57,7 @@ See https://github.com/adobe-type-tools/cmap-resources
           overflow: hidden !important;
           margin: 0 !important;
           padding: 0 !important;
+          background-color: #F4F4F9 !important;
       }
       #viewerContainer { 
           position: absolute !important;
@@ -58,6 +68,10 @@ See https://github.com/adobe-type-tools/cmap-resources
           width: 100% !important;
           height: 100% !important;
           overflow: auto !important;
+          background-color: #F4F4F9 !important;
+      }
+      .pdfViewer .page {
+          background-color: #FFFFFF !important;
       }
     </style>
 

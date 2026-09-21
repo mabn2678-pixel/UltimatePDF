@@ -34,6 +34,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -646,13 +647,22 @@ fun ViewerScreen(
         }
     }
 
+    val viewerBgColor = when (state.readingTheme) {
+        "dark" -> androidx.compose.ui.graphics.Color(0xFF121212)
+        "black" -> androidx.compose.ui.graphics.Color.Black
+        "sepia" -> androidx.compose.ui.graphics.Color(0xFFF4ECD8)
+        else -> androidx.compose.ui.graphics.Color(0xFFF4F4F9)
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = viewerBgColor,
         contentWindowInsets = WindowInsets(0.dp)
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(viewerBgColor)
                 .padding(innerPadding)
         ) {
             // Main WebView rendering PDF.js
@@ -1613,7 +1623,13 @@ fun PdfWebView(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 overScrollMode = android.view.View.OVER_SCROLL_NEVER
-                setBackgroundColor(android.graphics.Color.WHITE)
+                val webBgColor = when (state.readingTheme) {
+                    "dark" -> android.graphics.Color.parseColor("#121212")
+                    "black" -> android.graphics.Color.BLACK
+                    "sepia" -> android.graphics.Color.parseColor("#F4ECD8")
+                    else -> android.graphics.Color.parseColor("#F4F4F9")
+                }
+                setBackgroundColor(webBgColor)
                 isFocusable = true
                 isFocusableInTouchMode = true
 
@@ -2172,11 +2188,16 @@ fun PdfWebView(
                                                     -moz-user-select: none !important;
                                                     user-select: none !important;
                                                 }
+                                                * {
+                                                    -webkit-backdrop-filter: none !important;
+                                                    backdrop-filter: none !important;
+                                                }
                                                 .canvasWrapper, canvas {
                                                     -webkit-user-select: none !important;
                                                     -moz-user-select: none !important;
                                                     user-select: none !important;
                                                     pointer-events: none !important;
+                                                    contain: none !important;
                                                     -webkit-tap-highlight-color: transparent !important;
                                                 }
                                                 canvas::selection, .canvasWrapper::selection, .page::selection, .spread::selection, .dummyPage::selection, #viewerContainer::selection, #outerContainer::selection, body::selection, html::selection {
@@ -2217,9 +2238,6 @@ fun PdfWebView(
                                                 .textLayer .endOfContent::selection {
                                                     background: transparent !important;
                                                     color: transparent !important;
-                                                }
-                                                ::selection {
-                                                    background: rgba(33, 150, 243, 0.35) !important;
                                                 }
                                                 #outerContainer, #viewerContainer, #viewer, .page, .spread, .dummyPage, .canvasWrapper, .textLayer, .annotationLayer {
                                                     overflow-anchor: none !important;
@@ -3182,7 +3200,7 @@ fun PdfWebView(
                 onWebViewCreated(this)
             }
         },
-        modifier = modifier
+        modifier = modifier.clipToBounds()
     )
 }
 

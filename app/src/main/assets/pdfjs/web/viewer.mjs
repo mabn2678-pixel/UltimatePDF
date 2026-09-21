@@ -10735,7 +10735,7 @@ class PDFPageView {
       showCanvas = null;
     };
     const ctx = canvas.getContext("2d", {
-      alpha: true,
+      alpha: false,
       willReadFrequently: false
     });
     const outputScale = this.outputScale = new OutputScale();
