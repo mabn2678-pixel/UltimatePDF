@@ -1,0 +1,8 @@
+{
+  "name": "FinalPDF",
+  "description": "Professional Android reader using PDF.js with native Jetpack Compose controls, custom bottom bar, OCR scanning, and advanced document features.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
